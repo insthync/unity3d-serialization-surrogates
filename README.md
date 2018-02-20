@@ -1,7 +1,7 @@
 # unity3d-serialization-surrogates
 Serialization surrogates for Unity's structs
 
-** Can make formatter to serialize and deserialize: **
+**Can make formatter to serialize and deserialize:**
 * Color
 * Quaternion
 * Vector2Int
@@ -11,7 +11,7 @@ Serialization surrogates for Unity's structs
 * Vector4
 
 ## Usage Example
-** Serialize **
+**Serialize**
 ```csharp
 using (var memoryStream = new MemoryStream())
 {
@@ -28,7 +28,7 @@ using (var memoryStream = new MemoryStream())
 }
 ```
 
-** Deserialize **
+**Deserialize**
 ```csharp
 using (MemoryStream memoryStream = new MemoryStream(bytes))
 {
