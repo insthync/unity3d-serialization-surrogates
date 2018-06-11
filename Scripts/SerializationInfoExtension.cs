@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 public static class SerializationInfoExtension
@@ -17,10 +16,22 @@ public static class SerializationInfoExtension
     public static IList<T> GetListValue<T>(this SerializationInfo info, string dataName)
     {
         var result = new List<T>();
-        var count = info.GetInt32(dataName + "_Count");
-        for (var i = 0; i < count; ++i)
+        int? count = null;
+        try { count = info.GetInt32(dataName + "_Count"); }
+        catch { }
+        if (count.HasValue)
         {
-            result.Add((T)info.GetValue(dataName + "_[" + i + "]", typeof(T)));
+            for (var i = 0; i < count.Value; ++i)
+            {
+                result.Add((T)info.GetValue(dataName + "_[" + i + "]", typeof(T)));
+            }
+        }
+        else
+        {
+            // Backward compatible
+            try
+            { result.AddRange((IList<T>)info.GetValue(dataName, typeof(IList<T>))); }
+            catch { }
         }
         return result;
     }
