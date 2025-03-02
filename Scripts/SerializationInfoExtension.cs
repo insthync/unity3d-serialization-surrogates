@@ -1,38 +1,41 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-public static class SerializationInfoExtension
+namespace Insthync.SerializationSurrogates
 {
-    public static void AddListValue<T>(this SerializationInfo info, string dataName, IList<T> data)
+    public static class SerializationInfoExtension
     {
-        int count = data.Count;
-        info.AddValue(dataName + "_Count", count);
-        for (int i = 0; i < count; ++i)
+        public static void AddListValue<T>(this SerializationInfo info, string dataName, IList<T> data)
         {
-            info.AddValue(dataName + "_[" + i + "]", data[i]);
-        }
-    }
-
-    public static IList<T> GetListValue<T>(this SerializationInfo info, string dataName)
-    {
-        List<T> result = new List<T>();
-        int? count = null;
-        try { count = info.GetInt32(dataName + "_Count"); }
-        catch { }
-        if (count.HasValue)
-        {
-            for (int i = 0; i < count.Value; ++i)
+            int count = data.Count;
+            info.AddValue(dataName + "_Count", count);
+            for (int i = 0; i < count; ++i)
             {
-                result.Add((T)info.GetValue(dataName + "_[" + i + "]", typeof(T)));
+                info.AddValue(dataName + "_[" + i + "]", data[i]);
             }
         }
-        else
+
+        public static IList<T> GetListValue<T>(this SerializationInfo info, string dataName)
         {
-            // Backward compatible
-            try
-            { result.AddRange((IList<T>)info.GetValue(dataName, typeof(IList<T>))); }
+            List<T> result = new List<T>();
+            int? count = null;
+            try { count = info.GetInt32(dataName + "_Count"); }
             catch { }
+            if (count.HasValue)
+            {
+                for (int i = 0; i < count.Value; ++i)
+                {
+                    result.Add((T)info.GetValue(dataName + "_[" + i + "]", typeof(T)));
+                }
+            }
+            else
+            {
+                // Backward compatible
+                try
+                { result.AddRange((IList<T>)info.GetValue(dataName, typeof(IList<T>))); }
+                catch { }
+            }
+            return result;
         }
-        return result;
     }
 }
